@@ -1,7 +1,7 @@
 {
-  "namespace": "com.udacity",
+  "namespace": "com_udacity",
+  "name": "arrival_key",
   "type": "record",
-  "name": "arrival.key",
   "fields": [
     {
       "name": "timestamp",
