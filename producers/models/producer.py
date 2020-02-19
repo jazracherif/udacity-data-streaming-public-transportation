@@ -9,13 +9,6 @@ from confluent_kafka.avro import AvroProducer
 
 logger = logging.getLogger(__name__)
 
-from requests import Session
-import socket
-print (socket)
-hostname = 'localhost'
-# print(socket.gethostname())
-print(socket.getaddrinfo(hostname, 8081))
-
 
 class Producer:
     """Defines and provides common functionality amongst Producers"""
@@ -38,12 +31,7 @@ class Producer:
         self.num_partitions = num_partitions
         self.num_replicas = num_replicas
 
-        #
-        #
-        # TODO: Configure the broker properties below. Make sure to reference the project README
-        # and use the Host URL for Kafka and Schema Registry!
-        #
-        #
+   
         self.broker_properties = {
             "bootstrap.servers": "localhost:9092",
             "schema.registry.url": "http://localhost:8081"
@@ -55,14 +43,6 @@ class Producer:
                      "bootstrap.servers": "localhost:9092"
                      }
                 )
-
-        # s = Session()
-        # s.request("POST", "http://localhost:8081/subjects/com-stations-value/versions",
-        #     {'Accept': 'application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json', 'Content-Length': '1', 'Content-Type': 'application/vnd.schemaregistry.v1+json'},
-        #     {'schema': '{"type": "record", "name": "arrival_value", "namespace": "com_udacity", "fields": [{"type": "long", "name": "station_id"}, {"type": "long", "name": "train_id"}, {"type": "string", "name": "direction"}, {"type": "string", "name": "line"}, {"type": "string", "name": "train_status"}, {"type": ["null", "long"], "name": "prev_station_id"}, {"type": ["null", "string"], "name": "prev_direction"}]}'}
-        #     )
-
-        # exit()
 
         # If the topic does not already exist, try to create it
         if self.topic_name not in Producer.existing_topics:
@@ -78,12 +58,7 @@ class Producer:
 
     def create_topic(self):
         """Creates the producer topic if it does not already exist"""
-        #
-        #
-        # TODO: Write code that creates the topic for this producer if it does not already exist on
-        # the Kafka Broker.
-        #
-        #
+
         logger.info(f"creating topic {self.topic_name}")
 
         fs = self.client.create_topics(

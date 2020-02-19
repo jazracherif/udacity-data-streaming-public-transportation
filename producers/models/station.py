@@ -28,12 +28,6 @@ class Station(Producer):
             .replace("'", "")
         )
 
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
         topic_name = "com-stations"
         super().__init__(
             topic_name,

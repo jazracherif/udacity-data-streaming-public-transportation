@@ -31,12 +31,6 @@ class Turnstile(Producer):
             .replace("'", "")
         )
 
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
         super().__init__(
             f"turnstiles", 
             key_schema=Turnstile.key_schema,
@@ -51,11 +45,8 @@ class Turnstile(Producer):
         """Simulates riders entering through the turnstile."""
         num_entries = self.turnstile_hardware.get_entries(timestamp, time_step)
         logger.info(f"turnstile num_entries - {num_entries} ")
-        #
-        #
-        # TODO: Complete this function by emitting a message to the turnstile topic for the number
-        # of entries that were calculated
-        #
+
+
         for i in range(num_entries):
             self.producer.produce(
                topic=self.topic_name,
