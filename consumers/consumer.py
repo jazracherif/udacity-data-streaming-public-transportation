@@ -28,7 +28,7 @@ class KafkaConsumer:
         self.message_handler = message_handler
         self.sleep_secs = sleep_secs
         self.consume_timeout = consume_timeout
-        s = offset_earliest
+        self.offset_earliest = offset_earliest
 
         #
         #
@@ -37,39 +37,39 @@ class KafkaConsumer:
         #
         #
         self.broker_properties = {
-            "bootstrap.servers": "localhost:9092",
+            "bootstrap.servers": "PLAINTEXT://localhost:9092",
             'group.id': 'groupid',
         }
+
+        if offset_earliest:
+            self.broker_properties['auto.offset.reset'] = 'earliest'
 
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = "http://localhost:8081"
             self.consumer = AvroConsumer(
-                                config = self.broker_properties,
-
+                                self.broker_properties
                             )
         else:
             self.consumer = Consumer(
                                 self.broker_properties
                             )
-            pass
-
-        if offset_earliest:
-            self.broker_properties['auto.offset.reset'] = 'earliest'
-
         #
         #
         # TODO: Configure the AvroConsumer and subscribe to the topics. Make sure to think about
         # how the `on_assign` callback should be invoked.
         #
         #
+
+        logger.info(self.topic_name_pattern)
+
         self.consumer.subscribe( [self.topic_name_pattern], on_assign=self.on_assign )
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
         # TODO: If the topic is configured to use `offset_earliest` set the partition offset to
         # the beginning or earliest
-        logger.info("on_assign is incomplete - skipping")
+        logger.info("on_assign")
 
         if self.offset_earliest:
             for partition in partitions:
@@ -95,7 +95,12 @@ class KafkaConsumer:
         # is retrieved.
         #
         #
-        message = self.consumer.poll(self.consume_timeout)
+        try:
+            message = self.consumer.poll(self.consume_timeout)
+
+        except SerializerError as e:
+            print("Message deserialization failed for {}: {}".format(msg, e))
+            return 0
 
         if message is None:
             logger.info(f"No message received")
